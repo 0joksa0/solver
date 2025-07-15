@@ -6,6 +6,8 @@
 **Solver** is a modular, header-configurable numerical library written in C that provides implementations of several Runge-Kutta methods for solving Ordinary Differential Equations (ODEs). It is designed for flexibility and numerical precision, with support for multiple real number representations.
 
 This solver library was developed as part of a master's thesis focused on modeling plant growth through a digital twin approach. It serves as the numerical core for simulating physiological processes in plants by solving ordinary differential equations (ODEs) that describe biomass accumulation, resource allocation, and other dynamic behaviors over time.
+
+
 ---
 
 ## Implemented Features
