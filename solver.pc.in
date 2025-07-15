@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: solver-@TARGET@
+Description: ODE solver (${TARGET})
+Version: 1.0
+Libs: -L${libdir} -l@TARGET@
+Cflags: -I${includedir}
+
