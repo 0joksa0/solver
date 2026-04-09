@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(solver C)
 
 set(SOLVER_SRC
     src/solver.c
     src/ODE45.c
     src/RKF78.c
-    src/runge_kutta.c)
+    src/runge_kutta.c
+    src/logger.c 
+    src/observers.c)
 
 include(GNUInstallDirs)
 
