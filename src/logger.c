@@ -19,6 +19,7 @@ int solver_logger_init(
 
     if (summary_filename) {
         logger->summary_file = fopen(summary_filename, "w");
+        // TODO: If this open fails, close previously opened step_file to avoid leak.
         if (!logger->summary_file) return -1;
 
         fprintf(logger->summary_file,
@@ -69,4 +70,3 @@ void solver_logger_log_summary(
         (long double)stats->err_max,
         stats->wall_time);
 }
-

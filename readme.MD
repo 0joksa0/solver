@@ -94,5 +94,3 @@ Depending on your precision, link against the appropriate variant:
 - [ ] Error estimation and step rejection diagnostics
 - [ ] Parallel execution strategies for large systems
 
-
-

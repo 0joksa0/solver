@@ -2,7 +2,7 @@
 #define LOGGER_H
 
 #include "observers.h"
-#include "solver.h"
+
 #include <stdio.h>
 
 typedef struct SolverLogger {
@@ -31,4 +31,3 @@ void solver_logger_log_summary(
     const SolverStats* stats);
 
 #endif
-

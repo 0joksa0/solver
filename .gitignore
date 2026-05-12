@@ -7,3 +7,4 @@ out/
 compile_commands.json
 
 *.o
+.*

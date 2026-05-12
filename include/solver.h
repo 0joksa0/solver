@@ -9,6 +9,7 @@ typedef SOLVER_REAL_AS real_t;
 
 #include <float.h>
 #include <math.h>
+#include <stddef.h>
 
 #if defined(SOLVER_REAL_IS_DOUBLE)
 #define REAL_EPSILON DBL_EPSILON
@@ -32,7 +33,6 @@ typedef SOLVER_REAL_AS real_t;
 #define RTANH tanh
 #define REXP2 exp2
 #define RPOW10 exp10
-
 #elif defined(SOLVER_REAL_IS_LONG_DOUBLE)
 #define REAL_EPSILON LDBL_EPSILON
 #define REAL_MAX LDBL_MAX
@@ -55,7 +55,6 @@ typedef SOLVER_REAL_AS real_t;
 #define RTANH tanhl
 #define REXP2 exp2l
 #define RPOW10 exp10l
-
 #else
 #define REAL_EPSILON FLT_EPSILON
 #define REAL_MAX FLT_MAX
@@ -82,10 +81,8 @@ typedef SOLVER_REAL_AS real_t;
 
 #define REAL(x) ((real_t)(x))
 
-#include <stddef.h>
-
-typedef enum {
-    SOLVER_RK4,
+typedef enum SolverType {
+    SOLVER_RK4 = 0,
     SOLVER_ODE45,
     SOLVER_RKF78
 } SolverType;
@@ -95,10 +92,11 @@ typedef real_t (*ODEFunction)(
     real_t y,
     void* params);
 
-typedef void (*RHS)(
+typedef void (*VectorRHS)(
     real_t t,
-    const void* state,
-    void* dstate,
+    const real_t* state,
+    real_t* dstate,
+    size_t n,
     void* ctx);
 
 typedef void (*VectorObserver)(
@@ -107,53 +105,57 @@ typedef void (*VectorObserver)(
     size_t n,
     void* user);
 
-typedef struct SolverStats SolverStats;
-typedef struct SolverLogger SolverLogger;
+typedef struct SolverPluginManager SolverPluginManager;
 
-real_t solve(
-    SolverType type,
-    real_t tol,
+typedef struct SolverRunConfig {
+    SolverType type;
+    real_t t0;
+    real_t t_end;
+    real_t h_init;
+    real_t tol;
+    SolverPluginManager* plugins;
+} SolverRunConfig;
+
+typedef struct SolverStepConfig {
+    SolverType type;
+    real_t t0;
+    real_t h;
+    real_t tol;
+    SolverPluginManager* plugins;
+} SolverStepConfig;
+
+typedef struct SolverStepResult {
+    real_t t_out;
+    real_t h_used;
+    real_t h_next;
+    int accepted;
+    int stopped_by_plugin;
+} SolverStepResult;
+
+real_t solver_scalar_run(
+    const SolverRunConfig* config,
     real_t y0,
-    real_t t0,
-    real_t t_end,
-    real_t h_init,
-    ODEFunction f,
-    void* ctx);
+    ODEFunction rhs,
+    void* rhs_ctx);
 
-real_t solve_step(
-    SolverType type,
-    real_t tol,
-    real_t y_n,
-    real_t t_n,
-    real_t h,
-    ODEFunction f,
-    void* ctx);
+SolverStepResult solver_scalar_step(
+    const SolverStepConfig* config,
+    real_t* y,
+    ODEFunction rhs,
+    void* rhs_ctx);
 
-void vector_solve_step(
-    SolverType type,
-    real_t tol,
-    void* state,
-    size_t state_size,
-    real_t t_n,
-    real_t h,
-    RHS rhs,
-    void* ctx);
+void solver_vector_run(
+    const SolverRunConfig* config,
+    real_t* state,
+    size_t n,
+    VectorRHS rhs,
+    void* rhs_ctx);
 
-void vector_solve(
-    SolverType type,
-    real_t* x, // in/out state
-    size_t n, // broj real_t (dimenzija)
-    real_t t0,
-    real_t t_end,
-    real_t h_init,
-    real_t tol,
-    RHS rhs,
-    void* rhs_ctx,
-    VectorObserver obs, // može NULL
-    void* obs_ctx,
-    SolverStats* stats,
-    SolverLogger* logger
+SolverStepResult solver_vector_step(
+    const SolverStepConfig* config,
+    real_t* state,
+    size_t n,
+    VectorRHS rhs,
+    void* rhs_ctx);
 
-);
-
-#endif /* SOLVER_H */
+#endif

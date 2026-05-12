@@ -1,33 +1,16 @@
 #ifndef OBSERVERS_H
 #define OBSERVERS_H
 
-#include <stddef.h>
-#include <time.h>
+#include "framework/solver_events.h"
 #include "solver.h"
 
-/* ================================
-   Step-level information
-   ================================ */
-
-typedef struct StepInfo {
-    real_t err_norm;   /* normalized local error */
-    real_t dt_old;     /* step before scaling */
-    real_t dt_new;     /* proposed next step */
-    int accepted;      /* 1 = accepted, 0 = rejected */
-} StepInfo;
-
-
-/* ================================
-   Aggregate solver statistics
-   ================================ */
+#include <time.h>
 
 typedef struct SolverStats {
-
     size_t n_steps;
     size_t n_accept;
     size_t n_reject;
-
-    size_t nfev; /* optional: increment from solver */
+    size_t nfev;
 
     real_t dt_min;
     real_t dt_max;
@@ -36,17 +19,11 @@ typedef struct SolverStats {
     real_t err_max;
     real_t err_sum;
 
-    double wall_time; /* seconds */
+    double wall_time;
 
     struct timespec t_start;
     struct timespec t_end;
-
 } SolverStats;
-
-
-/* ================================
-   Public API
-   ================================ */
 
 void solver_stats_init(SolverStats* s);
 void solver_stats_start_timer(SolverStats* s);
