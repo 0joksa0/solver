@@ -16,6 +16,9 @@ set(SOLVER_SRC
     src/framework/model_runner.c
     src/framework/solver_plugin_manager.c
     src/framework/solver_runtime.c
+    src/framework/validation_mapping.c
+    src/framework/validation_metrics.c
+    src/framework/validation_model.c
     src/logger.c 
     src/observers.c)
 
@@ -87,7 +90,8 @@ if(BUILD_TESTING)
         tests/test_default_runtime.c
         tests/test_plugin_stop.c
         tests/test_model_buffers.c
-        tests/test_model_runner.c)
+        tests/test_model_runner.c
+        tests/test_validation_metrics.c)
     target_compile_definitions(test_solver PRIVATE
         SOLVER_REAL_AS=long\ double
         SOLVER_REAL_IS_LONG_DOUBLE)
