@@ -12,6 +12,8 @@ set(SOLVER_SRC
     src/backends/rk4_backend.c
     src/backends/rkf78_backend.c
     src/framework/default_runtime.c
+    src/framework/model_buffers.c
+    src/framework/model_runner.c
     src/framework/solver_plugin_manager.c
     src/framework/solver_runtime.c
     src/logger.c 
@@ -83,7 +85,9 @@ if(BUILD_TESTING)
         tests/test_solver_scalar_api.c
         tests/test_solver_vector_api.c
         tests/test_default_runtime.c
-        tests/test_plugin_stop.c)
+        tests/test_plugin_stop.c
+        tests/test_model_buffers.c
+        tests/test_model_runner.c)
     target_compile_definitions(test_solver PRIVATE
         SOLVER_REAL_AS=long\ double
         SOLVER_REAL_IS_LONG_DOUBLE)
