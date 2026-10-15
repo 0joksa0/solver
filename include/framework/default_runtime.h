@@ -1,6 +1,7 @@
 #ifndef FRAMEWORK_DEFAULT_RUNTIME_H
 #define FRAMEWORK_DEFAULT_RUNTIME_H
 
+#include "framework/async_logger.h"
 #include "framework/solver_plugin.h"
 #include "logger.h"
 #include "observers.h"
@@ -10,6 +11,7 @@ typedef struct SolverDefaultRuntimeConfig {
     void* observer_ctx;
     SolverStats* stats;
     SolverLogger* logger;
+    AsyncSolverLogger* async_logger;
 } SolverDefaultRuntimeConfig;
 
 int solver_default_runtime_init(

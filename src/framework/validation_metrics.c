@@ -76,6 +76,8 @@ ValidationStatus validation_compute_metric(
 {
     ValidationStatus status;
     real_t accum = REAL(0.0);
+    real_t ref_min = REAL_MAX;
+    real_t ref_max = -REAL_MAX;
     size_t used = 0;
     size_t skipped = 0;
     size_t i;
@@ -134,6 +136,7 @@ ValidationStatus validation_compute_metric(
         switch (metric) {
         case VALIDATION_METRIC_MSE:
         case VALIDATION_METRIC_RMSE:
+        case VALIDATION_METRIC_NRMSE:
             accum += diff * diff;
             break;
         case VALIDATION_METRIC_MAE:
@@ -141,6 +144,12 @@ ValidationStatus validation_compute_metric(
             break;
         default:
             return VALIDATION_STATUS_INVALID_ARGUMENT;
+        }
+        if (reference_value < ref_min) {
+            ref_min = reference_value;
+        }
+        if (reference_value > ref_max) {
+            ref_max = reference_value;
         }
         used++;
     }
@@ -152,8 +161,12 @@ ValidationStatus validation_compute_metric(
     }
 
     accum /= REAL(used);
-    if (metric == VALIDATION_METRIC_RMSE) {
+    if (metric == VALIDATION_METRIC_RMSE || metric == VALIDATION_METRIC_NRMSE) {
         accum = RSQRT(accum);
+    }
+    if (metric == VALIDATION_METRIC_NRMSE) {
+        real_t range = ref_max - ref_min;
+        accum /= range > REAL_EPSILON ? range : REAL(1.0);
     }
 
     out_result->sample_count = used;

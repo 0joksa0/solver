@@ -11,9 +11,12 @@ set(SOLVER_SRC
     src/backends/ode45_backend.c
     src/backends/rk4_backend.c
     src/backends/rkf78_backend.c
+    src/framework/async_logger.c
+    src/framework/batch_runner.c
     src/framework/default_runtime.c
     src/framework/model_buffers.c
     src/framework/model_runner.c
+    src/framework/sensitivity.c
     src/framework/solver_plugin_manager.c
     src/framework/solver_runtime.c
     src/framework/validation_mapping.c
@@ -91,6 +94,9 @@ if(BUILD_TESTING)
         tests/test_plugin_stop.c
         tests/test_model_buffers.c
         tests/test_model_runner.c
+        tests/test_async_logger.c
+        tests/test_batch_runner.c
+        tests/test_sensitivity.c
         tests/test_validation_metrics.c)
     target_compile_definitions(test_solver PRIVATE
         SOLVER_REAL_AS=long\ double

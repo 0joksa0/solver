@@ -11,6 +11,7 @@ typedef struct StatsPluginCtx {
 
 typedef struct LoggerPluginCtx {
     SolverLogger* logger;
+    AsyncSolverLogger* async_logger;
     SolverStats* stats;
 } LoggerPluginCtx;
 
@@ -81,11 +82,15 @@ static SolverPluginResult logger_plugin_on_step_result(void* plugin_ctx, const S
 {
     LoggerPluginCtx* ctx = (LoggerPluginCtx*)plugin_ctx;
 
-    if (!ctx->logger || !event->step_info) {
+    if (!event->step_info) {
         return SOLVER_PLUGIN_CONTINUE;
     }
 
-    solver_logger_log_step(ctx->logger, event->t_start, event->step_info);
+    if (ctx->async_logger) {
+        async_solver_logger_log_step(ctx->async_logger, event->t_start, event->step_info);
+    } else if (ctx->logger) {
+        solver_logger_log_step(ctx->logger, event->t_start, event->step_info);
+    }
     return SOLVER_PLUGIN_CONTINUE;
 }
 
@@ -94,11 +99,15 @@ static SolverPluginResult logger_plugin_on_run_finish(void* plugin_ctx, const So
     LoggerPluginCtx* ctx = (LoggerPluginCtx*)plugin_ctx;
     (void)event;
 
-    if (!ctx->logger || !ctx->stats) {
+    if (!ctx->stats) {
         return SOLVER_PLUGIN_CONTINUE;
     }
 
-    solver_logger_log_summary(ctx->logger, ctx->stats);
+    if (ctx->async_logger) {
+        async_solver_logger_log_summary(ctx->async_logger, ctx->stats);
+    } else if (ctx->logger) {
+        solver_logger_log_summary(ctx->logger, ctx->stats);
+    }
     return SOLVER_PLUGIN_CONTINUE;
 }
 
@@ -127,7 +136,7 @@ int solver_default_runtime_init(
         }
     }
 
-    if (config->logger) {
+    if (config->logger || config->async_logger) {
         const SolverPlugin plugin = {
             .name = "logger",
             .plugin_ctx = NULL,
@@ -139,6 +148,7 @@ int solver_default_runtime_init(
         };
         const LoggerPluginCtx ctx = {
             .logger = config->logger,
+            .async_logger = config->async_logger,
             .stats = config->stats
         };
 

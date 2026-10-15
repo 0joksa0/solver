@@ -133,6 +133,42 @@ Test(ValidationMetrics, ComputesMaeForDifferentChannel)
     cr_assert(fabsl((long double)result.value - 270.0L) < 1e-12L);
 }
 
+Test(ValidationMetrics, ComputesNrmseUsingReferenceRange)
+{
+    const real_t pred_values[] = {
+        REAL(2.0),
+        REAL(3.0),
+        REAL(4.0)
+    };
+    const char* const pred_names[] = { "x" };
+    const ValidationSeries pred = {
+        .time = REF_TIME,
+        .values = pred_values,
+        .sample_count = 3,
+        .channel_count = 1,
+        .channel_names = pred_names
+    };
+    ValidationMetricResult result = {0};
+    ValidationAlignConfig cfg = {
+        .interpolation = VALIDATION_INTERP_LINEAR,
+        .out_of_range_policy = VALIDATION_RANGE_ERROR
+    };
+    long double expected = sqrtl(2.0L / 3.0L) / 4.0L;
+
+    cr_assert_eq(
+        validation_compute_metric(
+            &REF_SERIES,
+            &pred,
+            0,
+            0,
+            &cfg,
+            VALIDATION_METRIC_NRMSE,
+            &result),
+        VALIDATION_STATUS_OK);
+    cr_assert_eq(result.status, VALIDATION_STATUS_OK);
+    cr_assert(fabsl((long double)result.value - expected) < 1e-12L);
+}
+
 Test(ValidationMetrics, ReturnsOutOfRangeStatusByDefault)
 {
     const real_t short_pred_time[] = { REAL(0.0), REAL(1.0) };

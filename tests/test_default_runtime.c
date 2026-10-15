@@ -3,7 +3,7 @@
 Test(DefaultRuntime, VectorRunTracksObserverStatsAndLogger)
 {
     SolverPluginManager manager;
-    SolverDefaultRuntimeConfig runtime_config;
+    SolverDefaultRuntimeConfig runtime_config = {0};
     ObserverProbe probe = {0};
     SolverStats stats;
     SolverLogger logger;

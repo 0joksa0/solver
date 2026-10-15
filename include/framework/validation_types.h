@@ -26,7 +26,8 @@ typedef enum ValidationOutOfRangePolicy {
 typedef enum ValidationMetricKind {
     VALIDATION_METRIC_MSE = 0,
     VALIDATION_METRIC_RMSE,
-    VALIDATION_METRIC_MAE
+    VALIDATION_METRIC_MAE,
+    VALIDATION_METRIC_NRMSE
 } ValidationMetricKind;
 
 typedef struct ValidationAlignConfig {
